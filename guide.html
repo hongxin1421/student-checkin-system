@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 局域网打卡系统 - 使用指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F5F7FA;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .step {
+            background: #FFFFFF;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #1E88E5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .step h3 {
+            color: #212121;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-number {
+            background: #1E88E5;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .step p {
+            color: #757575;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .access-links {
+            background: #43A047;
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .access-links h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .link-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .link-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .link-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            word-break: break-all;
+        }
+
+        .link-item a:hover {
+            text-decoration: underline;
+        }
+
+        .tips {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .tips h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tips ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .main-access {
+            background: #E53935;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .main-access h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .main-access a {
+            background: white;
+            color: #E53935;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .main-access a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 局域网打卡系统</h1>
+            <p>手机热点 + 多设备签到解决方案</p>
+        </div>
+        
+        <div class="content">
+            <div class="main-access">
+                <h2>🎯 直接访问打卡系统</h2>
+                <a href="http://localhost:5000">👉 进入打卡系统</a>
+            </div>
+
+            <div class="step">
+                <h3><span class="step-number">1</span>开启手机热点</h3>
+                <p>在你的手机上开启"个人热点"功能</p>
+                <p>记住热点名称和密码，建议设置为简单易记的名称</p>
+            </div>
+
+            <div class="step">
+                <h3><span class="step-number">2</span>连接所有设备</h3>
+                <p>让你的电脑连接到手机热点</p>
+                <p>让所有同学的手机也连接到你的手机热点</p>
+                <p>确保所有设备都连接到同一个WiFi网络</p>
+            </div>
+
+            <div class="step">
+                <h3><span class="step-number">3</span>启动打卡系统</h3>
+                <p>在电脑上运行打卡系统（应该已经在运行了）</p>
+                <p>确保服务器正常启动，显示"系统已就绪"</p>
+            </div>
+
+            <div class="access-links">
+                <h3>🔗 局域网访问地址</h3>
+                <div class="link-item">
+                    <strong>电脑端访问：</strong>
+                    <a href="http://localhost:5000">http://localhost:5000</a>
+                </div>
+                <div class="link-item">
+                    <strong>手机端访问（当前网络）：</strong>
+                    <a href="http://10.96.4.197:5000">http://10.96.4.197:5000</a>
+                </div>
+                <div class="link-item">
+                    <strong>备用地址（热点网络）：</strong>
+                    <a href="http://192.168.137.1:5000">http://192.168.137.1:5000</a>
+                </div>
+            </div>
+
+            <div class="step">
+                <h3><span class="step-number">4</span>开始签到</h3>
+                <p>同学们在手机浏览器中输入访问地址</p>
+                <p>输入自己的姓名，点击"打卡签到"</p>
+                <p>系统会实时显示签到状态和出勤统计</p>
+            </div>
+
+            <div class="tips">
+                <h3>💡 使用小贴士</h3>
+                <ul>
+                    <li>确保手机热点信号良好，避免网络不稳定</li>
+                    <li>建议提前测试网络连接，确保所有设备都能正常访问</li>
+                    <li>如果某个地址无法访问，可以尝试其他备用地址</li>
+                    <li>签到完成后，可以在电脑端查看完整的签到统计</li>
+                    <li>系统会自动保存签到记录，即使刷新页面也不会丢失</li>
+                </ul>
+            </div>
+
+            <div class="tips" style="background: #d1ecf1; border-color: #bee5eb;">
+                <h3 style="color: #0c5460;">🔧 常见问题解决</h3>
+                <ul style="color: #0c5460;">
+                    <li><strong>无法访问？</strong> 检查所有设备是否连接到同一个热点</li>
+                    <li><strong>页面加载慢？</strong> 检查手机热点信号强度</li>
+                    <li><strong>签到失败？</strong> 检查输入的姓名是否在预设名单中</li>
+                    <li><strong>IP限制问题？</strong> 可以清空IP记录文件重新签到</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

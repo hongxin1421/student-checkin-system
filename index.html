@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TC打卡系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #F5F7FA;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1E88E5;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      background: #1E88E5;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .checkin-section {
+      background: #FFFFFF;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #757575;
+      font-size: 1.1em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #E0E0E0;
+      border-radius: 10px;
+      font-size: 1.1em;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1E88E5;
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+    }
+
+    button {
+      background: #1E88E5;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .status-message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .results-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .result-card {
+      background: #FFFFFF;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .result-card h3 {
+      margin-bottom: 20px;
+      color: #212121;
+      font-size: 1.3em;
+      text-align: center;
+    }
+
+    .checked-in {
+      background: #43A047;
+      color: white;
+    }
+
+    .not-checked-in {
+      background: #E53935;
+      color: white;
+    }
+
+    .student-list {
+      list-style: none;
+    }
+
+    .student-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #E0E0E0;
+      font-weight: 500;
+    }
+
+    .student-list li:last-child {
+      border-bottom: none;
+    }
+
+    .stats {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #212121;
+    }
+
+    @media (max-width: 768px) {
+      .results-section {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+
+    /* 新签到动画效果 */
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+      }
+
+      70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+      }
+    }
+
+    /* 轮播图样式 */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    .carousel-btn {
+      background: rgba(30, 136, 229, 0.3);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .carousel-btn:hover {
+      background: rgba(30, 136, 229, 1);
+      transform: scale(1.1);
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .indicator.active {
+      background: #1E88E5;
+      transform: scale(1.2);
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      max-width: 80%;
+    }
+
+    .carousel-caption h3 {
+      margin-bottom: 5px;
+      font-size: 1.3em;
+    }
+
+    .carousel-caption p {
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .carousel-wrapper {
+        height: 250px;
+      }
+
+      .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .carousel-caption {
+        bottom: 50px;
+        padding: 10px 15px;
+      }
+
+      .carousel-caption h3 {
+        font-size: 1.1em;
+      }
+
+      .carousel-caption p {
+        font-size: 0.8em;
+      }
+    }
+
+    .sync-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sync-indicator.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 轮播图 -->
+    <div class="carousel-container">
+      <div class="carousel-wrapper" id="carouselWrapper">
+        <!-- 轮播图片将在这里动态加载 -->
+      </div>
+
+      <!-- 控制按钮 -->
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="prevBtn">‹</button>
+        <button class="carousel-btn" id="nextBtn">›</button>
+      </div>
+
+      <!-- 指示器 -->
+      <div class="carousel-indicators" id="indicators"></div>
+
+      <!-- 图片描述 -->
+      <div class="carousel-caption" id="carouselCaption" style="display: none;">
+        <h3 id="captionTitle"></h3>
+        <p id="captionText"></p>
+      </div>
+    </div>
+
+    <div id="syncIndicator" class="sync-indicator">🔄 数据同步中...</div>
+    <h1>📚 TC打卡系统</h1>
+
+    <div class="checkin-section">
+      <div class="input-group">
+        <label for="studentName">请输入你的姓名：</label>
+        <input type="text" id="studentName" placeholder="例如：张三" maxlength="20">
+      </div>
+      <button onclick="checkIn()">🎯 打卡签到</button>
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="results-section">
+      <div class="result-card checked-in">
+        <h3>✅ 已签到同学</h3>
+        <ul id="checkedInList" class="student-list"></ul>
+      </div>
+
+      <div class="result-card not-checked-in">
+        <h3>❌ 未签到同学</h3>
+        <ul id="notCheckedInList" class="student-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let studentList = [];
+    let checkedInStudents = [];
+
+    // 页面加载时获取学生名单和签到状态
+    window.onload = function () {
+      loadStudentList();
+      // 启动实时同步 - 每3秒自动刷新一次数据
+      startRealTimeSync();
+    };
+
+    // 加载学生名单
+    async function loadStudentList() {
+      try {
+        const response = await fetch('/api/students');
+        studentList = await response.json();
+        loadCheckInStatus();
+      } catch (error) {
+        console.error('获取学生名单失败:', error);
+        // 如果获取失败，使用默认名单
+        studentList = [
+          '张三', '李四', '王五', '赵六', '钱七', '孙八', '周九', '吴十',
+          '郑十一', '王十二', '冯十三', '陈十四', '褚十五', '卫十六', '蒋十七', '沈十八'
+        ];
+        loadCheckInStatus();
+      }
+    }
+
+    // 加载签到状态
+    async function loadCheckInStatus() {
+      try {
+        const response = await fetch('/api/checkin-status');
+        const data = await response.json();
+
+        if (data.checkedInStudents) {
+          checkedInStudents = data.checkedInStudents;
+          updateDisplay();
+        }
+      } catch (error) {
+        console.error('获取签到状态失败:', error);
+      }
+    }
+
+    // 签到功能
+    async function checkIn() {
+      const nameInput = document.getElementById('studentName');
+      const name = nameInput.value.trim();
+      const statusMessage = document.getElementById('statusMessage');
+
+      // 验证输入
+      if (!name) {
+        showMessage('请输入姓名！', 'error');
+        return;
+      }
+
+      // 检查是否在学生名单中
+      if (!studentList.includes(name)) {
+        showMessage('输入的姓名不在学生名单中，请重新输入！', 'warning');
+        return;
+      }
+
+      // 检查是否已经签到
+      if (checkedInStudents.includes(name)) {
+        showMessage('你已经签到过了，无需重复签到！', 'warning');
+        return;
+      }
+
+      try {
+        // 发送签到请求
+        const response = await fetch('/api/checkin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: name })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showMessage(`签到成功！欢迎 ${name}！`, 'success');
+          nameInput.value = '';
+          // 重新获取最新的签到状态和数据
+          await loadCheckInStatus();
+        } else {
+          // 处理IP冲突特殊情况
+          if (data.type === 'ip_conflict') {
+            // IP冲突警告显示给所有用户
+            showMessage(`⚠️ 检测到代签行为：${data.originalName} 试图帮 ${name} 代签！`, 'warning');
+            // 可以在这里添加额外的警告效果
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.style.background = '#ff6b6b';
+            statusMessage.style.color = 'white';
+            statusMessage.style.fontWeight = 'bold';
+            statusMessage.style.animation = 'shake 0.5s ease-in-out';
+            // 8秒后恢复正常样式
+            setTimeout(() => {
+              statusMessage.style.background = '';
+              statusMessage.style.color = '';
+              statusMessage.style.fontWeight = '';
+              statusMessage.style.animation = '';
+            }, 8000);
+          } else {
+            showMessage(data.message || '签到失败，请重试！', 'error');
+          }
+        }
+      } catch (error) {
+        console.error('签到请求失败:', error);
+        showMessage('网络错误，请检查网络连接后重试！', 'error');
+      }
+    }
+
+    // 显示状态消息
+    function showMessage(message, type) {
+      const statusMessage = document.getElementById('statusMessage');
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message ${type}`;
+      statusMessage.style.display = 'block';
+
+      // 8秒后自动隐藏消息
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 8000);
+    }
+
+    // 更新显示
+    function updateDisplay() {
+      const checkedInList = document.getElementById('checkedInList');
+      const notCheckedInList = document.getElementById('notCheckedInList');
+      const stats = document.getElementById('stats');
+
+      // 清空列表
+      checkedInList.innerHTML = '';
+      notCheckedInList.innerHTML = '';
+
+      // 分离已签到和未签到学生
+      const notCheckedIn = studentList.filter(name => !checkedInStudents.includes(name));
+
+      // 显示已签到学生
+      if (checkedInStudents.length > 0) {
+        checkedInStudents.forEach(name => {
+          const li = document.createElement('li');
+          li.textContent = name;
+          checkedInList.appendChild(li);
+        });
+      } else {
+        const li = document.createElement('li');
+        li.textContent = '暂无签到记录';
+        checkedInList.appendChild(li);
+      }
+
+      // 显示未签到学生
+      if (notCheckedIn.length > 0) {
+        notCheckedIn.forEach(name => {
+          const li = document.createElement('li');
+          li.textContent = name;
+          notCheckedInList.appendChild(li);
+        });
+      } else {
+        const li = document.createElement('li');
+        li.textContent = '所有同学都已签到';
+        notCheckedInList.appendChild(li);
+      }
+
+      // 更新统计信息
+      const total = studentList.length;
+      const checkedInCount = checkedInStudents.length;
+      const notCheckedInCount = total - checkedInCount;
+      const attendanceRate = Math.round((checkedInCount / total) * 100);
+
+      stats.innerHTML = `
+                总人数: <strong>${total}</strong> | 
+                已签到: <strong style="color: #28a745;">${checkedInCount}</strong> | 
+                未签到: <strong style="color: #dc3545;">${notCheckedInCount}</strong> | 
+                出勤率: <strong style="color: #667eea;">${attendanceRate}%</strong>
+            `;
+    }
+
+    // 回车键触发签到
+    document.getElementById('studentName').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        checkIn();
+      }
+    });
+
+    // 实时同步功能
+    let syncInterval;
+    let lastCheckInCount = 0;
+    let lastIpConflictEvent = null;  // 记录上次的IP冲突事件
+
+    function startRealTimeSync() {
+      // 每3秒检查一次最新数据
+      syncInterval = setInterval(async () => {
+        const syncIndicator = document.getElementById('syncIndicator');
+        try {
+          // 显示同步指示器
+          syncIndicator.classList.add('active');
+
+          const response = await fetch('/api/checkin-status');
+          const data = await response.json();
+
+          // 检查是否有新的签到
+          if (data.checkedInCount !== lastCheckInCount) {
+            const hasNewCheckIn = data.checkedInCount > lastCheckInCount;
+            lastCheckInCount = data.checkedInCount;
+
+            // 更新本地数据
+            if (data.checkedInStudents) {
+              checkedInStudents = data.checkedInStudents;
+              updateDisplay();
+
+              // 如果有新签到，显示视觉提示
+              if (hasNewCheckIn && data.checkedInCount > 0) {
+                showNewCheckInAnimation();
+                console.log(`📢 检测到新签到：${data.checkedInCount}人已签到`);
+              }
+            }
+          }
+
+          // 检查是否有新的IP冲突事件
+          if (data.ipConflictEvent && (!lastIpConflictEvent ||
+            data.ipConflictEvent.timestamp !== lastIpConflictEvent.timestamp)) {
+            lastIpConflictEvent = data.ipConflictEvent;
+
+            // 显示IP冲突警告给所有用户
+            showMessage(`⚠️ 检测到代签行为：${data.ipConflictEvent.originalName} 试图帮 ${data.ipConflictEvent.currentName} 代签！`, 'warning');
+
+            // 添加视觉警告效果
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.style.background = '#ff6b6b';
+            statusMessage.style.color = 'white';
+            statusMessage.style.fontWeight = 'bold';
+            statusMessage.style.animation = 'shake 0.5s ease-in-out';
+
+            // 5秒后恢复正常样式
+            setTimeout(() => {
+              statusMessage.style.background = '';
+              statusMessage.style.color = '';
+              statusMessage.style.fontWeight = '';
+              statusMessage.style.animation = '';
+            }, 5000);
+
+            console.log(`🚨 检测到IP冲突：${data.ipConflictEvent.currentName} 试图帮 ${data.ipConflictEvent.originalName} 代签`);
+          }
+
+          // 隐藏同步指示器
+          setTimeout(() => {
+            syncIndicator.classList.remove('active');
+          }, 500);
+
+        } catch (error) {
+          console.error('实时同步失败:', error);
+          // 隐藏同步指示器
+          syncIndicator.classList.remove('active');
+        }
+      }, 3000); // 3秒检查一次
+    }
+
+    // 新签到动画效果
+    function showNewCheckInAnimation() {
+      const checkedInCard = document.querySelector('.checked-in');
+      const stats = document.getElementById('stats');
+
+      // 添加闪烁效果
+      if (checkedInCard) {
+        checkedInCard.style.animation = 'pulse 0.6s ease-in-out 2';
+        setTimeout(() => {
+          checkedInCard.style.animation = '';
+        }, 1200);
+      }
+
+      // 统计区域高亮
+      if (stats) {
+        stats.style.background = '#1E88E5';
+        stats.style.color = 'white';
+        setTimeout(() => {
+          stats.style.background = '';
+          stats.style.color = '';
+        }, 1000);
+      }
+    }
+
+    // 页面卸载时清除定时器
+    window.addEventListener('beforeunload', function () {
+      if (syncInterval) {
+        clearInterval(syncInterval);
+      }
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+      }
+    });
+
+    // 轮播图功能
+    let currentSlide = 0;
+    let carouselInterval;
+
+    // 轮播图配置
+    const carouselConfig = {
+      images: [
+        {
+          src: '/images/slide1.jpg',
+          title: '欢迎欢迎',
+          description: '欢迎来到甲骨文TC'
+        },
+        {
+          src: '/images/slide2.jpg',
+          title: '保持热爱',
+          description: '不忘初心继续热爱'
+        },
+        {
+          src: '/images/slide3.jpg',
+          title: '热爱不打烊',
+          description: '这条路注定不平凡'
+        },
+        {
+          src: '/images/slide4.jpg',
+          title: '纯粹的爱',
+          description: '最纯粹的爱只为计算机'
+        }
+      ],
+      autoPlay: true,
+      interval: 4000 // 4秒切换
+    };
+
+    // 初始化轮播图
+    function initCarousel() {
+      const wrapper = document.getElementById('carouselWrapper');
+      const indicators = document.getElementById('indicators');
+
+      console.log('初始化轮播图...');
+      console.log('找到wrapper元素:', wrapper);
+      console.log('找到indicators元素:', indicators);
+      console.log('图片配置:', carouselConfig.images);
+
+      // 显示调试信息
+      const debugInfo = document.createElement('div');
+      debugInfo.style.cssText = 'position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; z-index: 9999; font-size: 12px;';
+      debugInfo.innerHTML = '轮播图初始化中...';
+      document.body.appendChild(debugInfo);
+
+      // 创建轮播图片
+      carouselConfig.images.forEach((image, index) => {
+        console.log(`创建轮播图片 ${index}:`, image);
+        const slide = document.createElement('div');
+        slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+        slide.innerHTML = `
+                    <img src="${image.src}" alt="${image.title}" onerror="handleImageError(this, '${image.title}');">
+                `;
+        wrapper.appendChild(slide);
+        console.log(`轮播图片 ${index} 创建完成`);
+        debugInfo.innerHTML += `<br>图片 ${index}: ${image.src}`;
+      });
+
+      debugInfo.innerHTML += '<br>轮播图初始化完成';
+      setTimeout(() => {
+        debugInfo.remove();
+      }, 5000);
+
+      // 创建指示器
+      carouselConfig.images.forEach((_, index) => {
+        const indicator = document.createElement('div');
+        indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
+        indicator.addEventListener('click', () => goToSlide(index));
+        indicators.appendChild(indicator);
+      });
+
+      // 添加控制按钮事件
+      document.getElementById('prevBtn').addEventListener('click', () => {
+        const newIndex = (currentSlide - 1 + carouselConfig.images.length) % carouselConfig.images.length;
+        goToSlide(newIndex);
+        resetAutoPlay();
+      });
+
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        const newIndex = (currentSlide + 1) % carouselConfig.images.length;
+        goToSlide(newIndex);
+        resetAutoPlay();
+      });
+
+      // 开始自动播放
+      if (carouselConfig.autoPlay) {
+        startAutoPlay();
+      }
+
+      // 鼠标悬停时暂停自动播放
+      const carouselContainer = document.querySelector('.carousel-container');
+      carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+      carouselContainer.addEventListener('mouseleave', () => {
+        if (carouselConfig.autoPlay) {
+          startAutoPlay();
+        }
+      });
+    }
+
+    // 切换到指定幻灯片
+    function goToSlide(index) {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const indicators = document.querySelectorAll('.indicator');
+      const captionTitle = document.getElementById('captionTitle');
+      const captionText = document.getElementById('captionText');
+      const caption = document.getElementById('carouselCaption');
+
+      // 隐藏所有幻灯片
+      slides.forEach(slide => slide.classList.remove('active'));
+      indicators.forEach(indicator => indicator.classList.remove('active'));
+
+      // 显示当前幻灯片
+      slides[index].classList.add('active');
+      indicators[index].classList.add('active');
+
+      // 更新图片描述
+      const image = carouselConfig.images[index];
+      if (image.title || image.description) {
+        captionTitle.textContent = image.title || '';
+        captionText.textContent = image.description || '';
+        caption.style.display = 'block';
+      } else {
+        caption.style.display = 'none';
+      }
+
+      currentSlide = index;
+    }
+
+    // 开始自动播放
+    function startAutoPlay() {
+      stopAutoPlay(); // 先停止之前的定时器
+      carouselInterval = setInterval(() => {
+        const newIndex = (currentSlide + 1) % carouselConfig.images.length;
+        goToSlide(newIndex);
+      }, carouselConfig.interval);
+    }
+
+    // 停止自动播放
+    function stopAutoPlay() {
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+      }
+    }
+
+    // 重置自动播放
+    function resetAutoPlay() {
+      if (carouselConfig.autoPlay) {
+        stopAutoPlay();
+        startAutoPlay();
+      }
+    }
+
+    // 图片加载错误处理
+    function handleImageError(img, title) {
+      console.log(`图片加载失败: ${img.src}, 标题: ${title}`);
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPueLiOadveaWh+aho+S8oOecn+WbvueJhzwvdGV4dD48L3N2Zz4=';
+    }
+
+    // 初始化轮播图 - 确保DOM加载完成后再初始化
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOM加载完成，开始初始化轮播图...');
+      initCarousel();
+    });
+
+    // 如果DOMContentLoaded已经触发，直接初始化
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        initCarousel();
+      });
+    } else {
+      initCarousel();
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+{
+  "checkedInStudents": [
+    "熊梓睿"
+  ],
+  "records": [
+    {
+      "name": "熊梓睿",
+      "ip": "127.0.0.1",
+      "time": "2025-10-26 13:22:42",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0"
+    }
+  ],
+  "ip_conflict_events": [
+    {
+      "timestamp": "2025-10-26 13:22:46",
+      "originalName": "熊梓睿",
+      "currentName": "周裕娟",
+      "ip": "127.0.0.1"
+    },
+    {
+      "timestamp": "2025-10-26 13:22:51",
+      "originalName": "熊梓睿",
+      "currentName": "周裕娟",
+      "ip": "127.0.0.1"
+    },
+    {
+      "timestamp": "2025-10-26 13:22:54",
+      "originalName": "熊梓睿",
+      "currentName": "周裕娟",
+      "ip": "127.0.0.1"
+    },
+    {
+      "timestamp": "2025-10-26 13:22:57",
+      "originalName": "熊梓睿",
+      "currentName": "周裕娟",
+      "ip": "127.0.0.1"
+    },
+    {
+      "timestamp": "2025-10-26 13:24:02",
+      "originalName": "熊梓睿",
+      "currentName": "周裕娟",
+      "ip": "127.0.0.1"
+    }
+  ]
+}
